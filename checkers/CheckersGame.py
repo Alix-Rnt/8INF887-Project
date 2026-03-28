@@ -89,6 +89,13 @@ class CheckersGame:
     # EXTERNAL LOGIC #
     #----------------#
 
+    def copy(self):
+        new_board = CheckersGame(self._size)
+        new_board._next_player = self._next_player
+        new_board._board = [[c for c in r] for r in self._board]
+        new_board._stack = []
+        return new_board
+
     # Calculate all player available actions
     # Longer captures are prioritized over regular moves
     def player_actions(self):

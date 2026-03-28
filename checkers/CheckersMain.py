@@ -1,5 +1,6 @@
 import time
 import random
+from tqdm import tqdm
 
 import CheckersGame as b
 
@@ -41,11 +42,9 @@ def play_game(verbose=False):
         return 'n'
 
 if __name__ == "__main__":
-    play_game(True)
+    # play_game(True)
     
-    # winners = {'w':0, 'b':0, 'n':0}
-    # for i in range(100):
-    #     if (i+1) % 100 == 0:
-    #         print(f"Game {i+1}")
-    #     winners[play_game()] += 1
-    # print(winners)
+    winners = {'w':0, 'b':0, 'n':0}
+    for i in tqdm(range(100)):
+        winners[play_game()] += 1
+    print(winners)
