@@ -27,7 +27,7 @@ def play_game(verbose=False):
         action = random.choice(actions)
         if verbose: print(f"Chosen action : {action}")
 
-        board.push(action, is_capture)
+        board = board.apply_move(action, is_capture)
 
         round += 1
 
@@ -36,7 +36,7 @@ def play_game(verbose=False):
 
     if round < max_rounds:
         if verbose: print(f"{board.get_winner()} won !")
-        return board.get_winner()
+        return 'w' if board.get_winner() == board._WHITE else 'b'
     else:
         if verbose: print(f"Tie !")
         return 'n'

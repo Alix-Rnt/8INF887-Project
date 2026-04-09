@@ -29,7 +29,7 @@ class MCTSNode:
 
         new_state = self.state.copy()
         player_who_played = new_state._next_player
-        new_state.push(action, self.is_capture)
+        new_state.apply_move(action, self.is_capture)
         child = MCTSNode(new_state, parent=self, action=action, player=player_who_played)
 
         self.children.append(child)
@@ -62,18 +62,14 @@ class MCTSNode:
     def rollout(self):
         new_state = self.state.copy()
 
-        round = 0
-
-        while True:
+        for _ in range(MAX_ROUNDS):
             winner = new_state.get_winner()
             if winner is not None:
                 return winner
-            if round >= MAX_ROUNDS:
-                return None
             actions, is_capture = new_state.player_actions()
             move = random.choice(actions)
-            new_state.push(move, is_capture)
-            round += 1
+            new_state.apply_move(move, is_capture)
+        return None
 
 def mcts_search(root_state, iterations=500):
     root = MCTSNode(root_state, player=None)
@@ -113,14 +109,14 @@ def play_game(iterations=500, verbose=False):
         if verbose: print(f"Available actions for player {board._next_player} :")
         if verbose: print(f"{'Capture' if is_capture else 'Move'} x{len(actions)}")
 
-        if board._next_player == board._w:
+        if board._next_player == board._WHITE:
             action = mcts_search(board, iterations)
             if verbose: print(f"MCTS action : {action}")
         else:
             action = random.choice(actions)
             if verbose: print(f"Random action : {action}")
 
-        board.push(action, is_capture)
+        board = board.apply_move(action, is_capture)
 
         round += 1
 
@@ -129,7 +125,7 @@ def play_game(iterations=500, verbose=False):
 
     if round < MAX_ROUNDS:
         if verbose: print(f"{board.get_winner()} won !")
-        return board.get_winner()
+        return 'w' if board.get_winner() == board._WHITE else 'b'
     else:
         if verbose: print(f"Tie !")
         return 'n'
@@ -137,12 +133,17 @@ def play_game(iterations=500, verbose=False):
 if __name__ == "__main__":
     # print(play_game(True))
 
-    results: list[tuple] = []
+    winners = {'w':0, 'b':0, 'n':0}
+    for i in tqdm(range(100)):
+        winners[play_game(500, True)] += 1
+    print(winners)
 
-    for iterations in tqdm(range(10, 110, 10)):
-        winners = {'w':0, 'b':0, 'n':0}
-        for i in tqdm(range(100)):
-            winners[play_game(iterations)] += 1
-        results.append((iterations, winners['w'], winners['b'], winners['n']))
-        print(results[-1])
-    print(results)
+    # results: list[tuple] = []
+
+    # for iterations in tqdm(range(10, 110, 10)):
+    #     winners = {'w':0, 'b':0, 'n':0}
+    #     for i in tqdm(range(100)):
+    #         winners[play_game(iterations)] += 1
+    #     results.append((iterations, winners['w'], winners['b'], winners['n']))
+    #     print(results[-1])
+    # print(results)
