@@ -12,7 +12,7 @@ class ChessGame(Game):
         return self._base_board._pieces.copy()
     
     def getBoardSize(self):
-        return (10, 8)
+        return self._base_board._pieces.size
     
     def getActionSize(self):
         """
@@ -25,16 +25,15 @@ class ChessGame(Game):
         return 64 * (56 + 8 + 12) # 64 * 76 = 4864
     
     def getNextState(self, board, player, action):
-        pieces = np.copy(board)
-        real_action = Board.mirror_action(action) if player == -1 else action
-        pieces = Board.update_pieces(pieces, player, real_action)
+        pieces = board.copy()
+        pieces = Board.update_pieces(pieces, player, action)
+        # if player == -1:
+        #     pieces = Board.flip_board(pieces)
         return (pieces, -player)
     
     def getValidMoves(self, board, player):
-        valids = np.zeros(self.getActionSize(), dtype=np.int8)
         legal_moves = Board.get_legal_moves(board)
-        if player == -1:
-            legal_moves = [Board.mirror_action(a) for a in legal_moves]
+        valids = np.zeros(self.getActionSize(), dtype=np.int8)
         valids[legal_moves] = 1
         return valids
     
@@ -42,15 +41,7 @@ class ChessGame(Game):
         return Board.game_state(board, player)
     
     def getCanonicalForm(self, board, player):
-        if player == 1:
-            return board.copy()
-        canonical = board.copy()
-        canonical[:8] = -np.flipud(board[:8])
-        canonical[9][0] = board[9][2]
-        canonical[9][1] = board[9][3]
-        canonical[9][2] = board[9][0]
-        canonical[9][3] = board[9][1]
-        return canonical
+        return board.copy() if player == 1 else Board.flip_board(board)
         
     def getSymmetries(self, board, pi):
         return [(board, pi)] # no symetry

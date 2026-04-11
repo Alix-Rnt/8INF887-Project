@@ -1,8 +1,16 @@
 import time
+import os
+import numpy as np
+from argparse import Namespace
 
 from .ChessPlayers import RandomPlayer
 from .ChessGame import ChessGame
 from .ChessLogic import Board
+from .ChessNet import ChessNetWrapper
+from Arena import Arena
+from MCTS import MCTS
+
+CHESS_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def play_game(verbose=False):
     game = ChessGame()
@@ -37,7 +45,7 @@ def play_game(verbose=False):
         # if verbose : time.sleep(1)
     
     game_end = game.getGameEnded(board, player)
-    if (game_end == 2):
+    if (game_end == 0.001):
         if verbose: print("Draw")
     else:
         if verbose: print(f"Player {player} {'won' if game_end == 1 else 'lost'}")
@@ -47,12 +55,34 @@ def play_game(verbose=False):
         return 0
     else:
         return -1
+    
 
 if __name__ == "__main__":
-    # play_game(True)
+    play_game(True)
 
-    winners = {1: 0, -1: 0, 0: 0}
-    for i in range(100):
-        print(f"Game {i}")
-        winners[play_game()] += 1
-    print(winners)
+    # winners = {1: 0, -1: 0, 0: 0}
+    # for i in range(100):
+    #     print(f"Game {i}")
+    #     winners[play_game()] += 1
+    # print(winners)
+
+    # args = Namespace(
+    #     numMCTSSims = 25,
+    #     cpuct = 1.0,
+    # )
+
+    # game = ChessGame()
+
+    # net = ChessNetWrapper(game)
+    # net.load_checkpoint(os.path.join(CHESS_DIR, './checkpoints/'), 'best.pth.tar')
+
+    # mcts = MCTS(game, net, args)
+    # aiPlayer = lambda board: np.argmax(mcts.getActionProb(board, temp=0))
+
+    # def randomPlayer(board):
+    #     valids = game.getValidMoves(board, 1)
+    #     actions = np.where(valids)[0]
+    #     return np.random.choice(actions)
+
+    # arena = Arena(aiPlayer, randomPlayer, game)
+    # print(arena.playGames(10, verbose=False))

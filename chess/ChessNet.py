@@ -21,11 +21,11 @@ class ChessNNet(nn.Module):
 
         self.pi_conv = nn.Conv2d(256, 2, kernel_size=1)
         self.pi_bn = nn.BatchNorm2d(2)
-        self.pi_fc = nn.Linear(2 * 10 * 8, action_size)
+        self.pi_fc = nn.Linear(2 * 9 * 8, action_size)
 
         self.v_conv = nn.Conv2d(256, 1, kernel_size=1)
         self.v_bn = nn.BatchNorm2d(1)
-        self.v_fc1 = nn.Linear(1 * 10 * 8, 256)
+        self.v_fc1 = nn.Linear(1 * 9 * 8, 256)
         self.v_fc2 = nn.Linear(256, 1)
 
     def forward(self, x):
@@ -45,7 +45,6 @@ class ChessNNet(nn.Module):
         v = torch.tanh(self.v_fc2(v))
 
         return pi, v
-
 
 class ChessNetWrapper(NeuralNet):
     def __init__(self, game):
