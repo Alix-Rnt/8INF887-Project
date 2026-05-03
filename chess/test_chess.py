@@ -7,6 +7,7 @@ from .ChessPlayers import RandomPlayer
 from .ChessGame import ChessGame
 from .ChessLogic import Board
 from .ChessNet import ChessNetWrapper
+from .ChessVisualizer import ChessVisualizer
 from Arena import Arena
 from MCTS import MCTS
 
@@ -56,9 +57,23 @@ def play_game(verbose=False):
     else:
         return -1
     
+def get_game_history(arena):
+    """Lance une partie et récupère tous les plateaux"""
+    board = arena.game.getInitBoard()
+    history = [board.copy()]
+    curPlayer = 1
+    
+    while arena.game.getGameEnded(board, curPlayer) == 0:
+        action = arena.player1(arena.game.getCanonicalForm(board, curPlayer)) if curPlayer == 1 \
+                 else arena.player2(arena.game.getCanonicalForm(board, curPlayer))
+        
+        board, curPlayer = arena.game.getNextState(board, curPlayer, action)
+        history.append(board.copy())
+        
+    return history    
 
 if __name__ == "__main__":
-    play_game(True)
+    # play_game(True)
 
     # winners = {1: 0, -1: 0, 0: 0}
     # for i in range(100):
@@ -66,23 +81,28 @@ if __name__ == "__main__":
     #     winners[play_game()] += 1
     # print(winners)
 
-    # args = Namespace(
-    #     numMCTSSims = 25,
-    #     cpuct = 1.0,
-    # )
+    args = Namespace(
+        numMCTSSims = 25,
+        cpuct = 1.0,
+    )
 
-    # game = ChessGame()
+    game = ChessGame()
 
-    # net = ChessNetWrapper(game)
-    # net.load_checkpoint(os.path.join(CHESS_DIR, './checkpoints/'), 'best.pth.tar')
+    net = ChessNetWrapper(game)
+    net.load_checkpoint(os.path.join(CHESS_DIR, './checkpoints/'), 'best.pth.tar')
 
-    # mcts = MCTS(game, net, args)
-    # aiPlayer = lambda board: np.argmax(mcts.getActionProb(board, temp=0))
+    mcts = MCTS(game, net, args)
+    aiPlayer = lambda board: np.argmax(mcts.getActionProb(board, temp=0))
 
-    # def randomPlayer(board):
-    #     valids = game.getValidMoves(board, 1)
-    #     actions = np.where(valids)[0]
-    #     return np.random.choice(actions)
+    def randomPlayer(board):
+        valids = game.getValidMoves(board, 1)
+        actions = np.where(valids)[0]
+        return np.random.choice(actions)
 
-    # arena = Arena(aiPlayer, randomPlayer, game)
+    arena = Arena(aiPlayer, randomPlayer, game)
     # print(arena.playGames(10, verbose=False))
+
+    history = get_game_history(arena)
+    ChessVisualizer(history)
+
+    pass

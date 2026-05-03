@@ -1,7 +1,5 @@
 import numpy as np
 
-_DRAW_VALUE = 0.001
-
 _EMPTY = 0
 
 _WHITE = 1
@@ -73,8 +71,6 @@ class Board():
                     if pieces[li, lj] != _EMPTY and np.sign(pieces[li, lj]) != np.sign(player):
                         pieces[li, lj] = _EMPTY
                         break
-
-        return pieces
 
     """
     Check if position (x,y) is on the board
