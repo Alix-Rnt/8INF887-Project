@@ -14,7 +14,7 @@ In this repo you can find 3 games with some trained models :
 
 You can train and test the models by yourself.
 
-### Training
+### Train
 
 `python -m <game>.Train<Game>`
 
@@ -46,4 +46,4 @@ Gamemodes are:
 - viz : AI VS Random Player visualized on screen (1 game)
 - play : Human VS AI
 
-Model paths can be fond in the `checkpoints` folder for every game. Juste put the model's name, often being `best.pth.tar`.
+Model paths can be fond in the `checkpoints` folder for every game. Just put the model's name, often being `best.pth.tar`.
