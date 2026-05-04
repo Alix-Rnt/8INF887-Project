@@ -3,10 +3,8 @@ import os
 import time
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-import numpy as np
 from argparse import Namespace
 
-from Game import Game
 from Coach import Coach
 from .ChessGame import ChessGame
 from .ChessNet import ChessNetWrapper

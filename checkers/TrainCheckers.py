@@ -1,11 +1,8 @@
 import sys
 import os
 import time
-import cProfile
-import pstats
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-import numpy as np
 from argparse import Namespace
 
 from Coach import Coach
